@@ -107,7 +107,7 @@ public class ProductController {
     //Récupérer la liste des produits alphabetiquement
     @ApiOperation(value = "Récupérer la liste des produits alphabetiquement")
     @GetMapping(value = "/ProduitsTries")
-    public List<Product>  trierProduitsParOrdreAlphabetique() {
+    public List<Product> trierProduitsParOrdreAlphabetique() {
         Sort sort = new Sort(Sort.Direction.ASC, "nom");
         return productDao.findAll(sort);
     }
