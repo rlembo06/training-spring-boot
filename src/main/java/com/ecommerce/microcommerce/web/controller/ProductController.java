@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -98,11 +99,17 @@ public class ProductController {
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
-    public List<Product>  testeDeRequetes(@PathVariable int prix) {
+    public List<Product> testeDeRequetes(@PathVariable int prix) {
 
         return productDao.chercherUnProduitCher(400);
     }
 
-
+    //Récupérer la liste des produits alphabetiquement
+    @ApiOperation(value = "Récupérer la liste des produits alphabetiquement")
+    @GetMapping(value = "/ProduitsTries")
+    public List<Product>  trierProduitsParOrdreAlphabetique() {
+        Sort sort = new Sort(Sort.Direction.ASC, "nom");
+        return productDao.findAll(sort);
+    }
 
 }
