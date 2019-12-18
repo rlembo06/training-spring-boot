@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@Api( description="API pour es opérations CRUD sur les produits.")
+@Api( description="API pour es opérations CRUD sur les produits.", tags = "products")
 
 @RestController
 public class ProductController {
