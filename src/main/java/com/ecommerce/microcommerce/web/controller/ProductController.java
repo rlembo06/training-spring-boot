@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.List;
 
 
-@Api( description="API pour es opérations CRUD sur les produits.")
+@Api( description="API pour es opérations CRUD sur les produits.", tags = "products")
 
 @RestController
 public class ProductController {
