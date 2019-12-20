@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitInternalError;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
@@ -23,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO : Handling 500 error https://dzone.com/articles/spring-rest-service-exception-handling-1
 
 @Api( description="API pour es opérations CRUD sur les produits.", tags = "products")
-
 @RestController
 public class ProductController {
 
@@ -35,83 +36,115 @@ public class ProductController {
     //Récupérer la liste des produits
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
     public MappingJacksonValue listeProduits() {
-        Iterable<Product> produits = productDao.findAll();
-        if(IterableUtils.size(produits) == 0) throw new ProduitIntrouvableException("Aucun produit.");
+        try {
+            Iterable<Product> produits = productDao.findAll();
+            if(IterableUtils.size(produits) == 0) throw new ProduitIntrouvableException("Aucun produit.");
 
-        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
-        FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("monFiltreDynamique", monFiltre);
-        MappingJacksonValue produitsFiltres = new MappingJacksonValue(produits);
-        produitsFiltres.setFilters(listDeNosFiltres);
-        return produitsFiltres;
+            SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
+            FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("monFiltreDynamique", monFiltre);
+            MappingJacksonValue produitsFiltres = new MappingJacksonValue(produits);
+            produitsFiltres.setFilters(listDeNosFiltres);
+            return produitsFiltres;
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
+        }
     }
 
     //Récupérer un produit par son Id
     @ApiOperation(value = "Récupère un produit grâce à son ID à condition que celui-ci soit en stock!")
     @GetMapping(value = "/Produits/{id}")
     public Product afficherUnProduit(@PathVariable int id) {
-        Product produit = productDao.findById(id);
-        if(produit==null) throw new ProduitIntrouvableException("Le produit avec l'id " + id + " est INTROUVABLE. Écran Bleu si je pouvais.");
-        return produit;
+        try {
+            Product produit = productDao.findById(id);
+            if(produit == null) throw new ProduitIntrouvableException("Le produit avec l'id " + id + " est INTROUVABLE. Écran Bleu si je pouvais.");
+            return produit;
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
+        }
     }
 
     //ajouter un produit
     @PostMapping(value = "/Produits")
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
-        if(product.getPrix() <= 0){
-            throw new ProduitGratuitException("Impossible d'ajouter le produit car il est gratuit");
+        try {
+            if(product.getPrix() <= 0){
+                throw new ProduitGratuitException("Impossible d'ajouter le produit car il est gratuit");
+            }
+            Product productAdded = productDao.save(product);
+            if (productAdded == null)
+                return ResponseEntity.noContent().build();
+
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(productAdded.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).build();
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
         }
-        Product productAdded = productDao.save(product);
-        if (productAdded == null)
-            return ResponseEntity.noContent().build();
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(productAdded.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping (value = "/Produits/{id}")
     public void supprimerProduit(@PathVariable int id) {
-        productDao.delete(id);
+        try {
+            productDao.delete(id);
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
+        }
     }
 
     @PutMapping (value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
-        productDao.save(product);
+        try {
+            productDao.save(product);
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
+        }
     }
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
     public List<Product> testeDeRequetes(@PathVariable int prix) {
-        List<Product> produits = productDao.chercherUnProduitCher(prix);
-        if(produits.size() == 0) throw new ProduitIntrouvableException("Aucun produit cher au dessus de "+ prix +" euros.");
-        return produits;
+        try {
+            List<Product> produits = productDao.chercherUnProduitCher(prix);
+            if(produits.size() == 0) throw new ProduitIntrouvableException("Aucun produit cher au dessus de "+ prix +" euros.");
+            return produits;
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
+        }
     }
 
     @ApiOperation(value = "Affiche la marge pour chaque produit")
     @GetMapping(value = "/AdminProduits")
-    public Map<String, Integer> calculerMargeProduits(){
-        List<Product> products = productDao.findAll();
-        if(products.size() == 0) throw new ProduitIntrouvableException("Aucun produit.");
-        Map<String, Integer> result = new HashMap<>();
-        for(Product product: products) {
-            int marge = product.getPrix() - product.getPrixAchat();
-            result.put(product.toString(), marge);
+    public Map<String, Integer> calculerMargeProduits() {
+        try {
+            List<Product> products = productDao.findAll();
+            if(products.size() == 0) throw new ProduitIntrouvableException("Aucun produit.");
+            Map<String, Integer> result = new HashMap<>();
+            for(Product product: products) {
+                int marge = product.getPrix() - product.getPrixAchat();
+                result.put(product.toString(), marge);
+            }
+            return result;
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
         }
-        return result;
     }
 
     //Récupérer la liste des produits alphabetiquement
     @ApiOperation(value = "Récupérer la liste des produits alphabetiquement")
     @GetMapping(value = "/ProduitsTries")
     public List<Product> trierProduitsParOrdreAlphabetique() {
-        Sort sort = new Sort(Sort.Direction.ASC, "nom");
-        List<Product> produits = productDao.findAll(sort);
-        if(produits.size() == 0) throw new ProduitIntrouvableException("Aucun produit.");
-        return produits;
+        try {
+            Sort sort = new Sort(Sort.Direction.ASC, "nom");
+            List<Product> produits = productDao.findAll(sort);
+            if(produits.size() == 0) throw new ProduitIntrouvableException("Aucun produit.");
+            return produits;
+        } catch (Exception err) {
+            throw new ProduitInternalError(err.getMessage());
+        }
     }
 
 }
