@@ -6,26 +6,45 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import java.time.LocalDateTime;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ProduitIntrouvableException.class)
     public ResponseEntity<CustomErrorResponse> customHandleNotFound(Exception ex, WebRequest request) {
-        CustomErrorResponse errors = new CustomErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        String dateError = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+        CustomErrorResponse errors = new CustomErrorResponse(dateError, HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ProduitBadRequestException.class)
     public ResponseEntity<CustomErrorResponse> customBadRequest(Exception ex, WebRequest request) {
-        CustomErrorResponse errors = new CustomErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        String dateError = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+        CustomErrorResponse errors = new CustomErrorResponse(dateError, HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ProduitGratuitException.class)
+    public ResponseEntity<CustomErrorResponse> customNotAcceptable(Exception ex, WebRequest request) {
+        String dateError = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+        CustomErrorResponse errors = new CustomErrorResponse(dateError, HttpStatus.NOT_ACCEPTABLE.value(), ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(ProduitInternalErrorException.class)
+    public ResponseEntity<CustomErrorResponse> customInternalError(Exception ex, WebRequest request) {
+        String dateError = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+        CustomErrorResponse errors = new CustomErrorResponse(dateError, HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
     public ResponseEntity<CustomErrorResponse> customUnAuthorized (Exception ex, WebRequest request) {
-        CustomErrorResponse errors = new CustomErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+        String dateError = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+        CustomErrorResponse errors = new CustomErrorResponse(dateError, HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
 }

@@ -1,27 +1,25 @@
 package com.ecommerce.microcommerce.web.exceptions;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class CustomErrorResponse {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    private LocalDateTime timestamp;
+
+    private String date;
     private int status;
     private String error;
 
-    public CustomErrorResponse(LocalDateTime timestamp, int status, String error) {
-        this.timestamp = timestamp;
+    public CustomErrorResponse(String date, int status, String error) {
+        this.date = date;
         this.status = status;
         this.error = error;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public String getDate() {
+        return date;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getStatus() {
