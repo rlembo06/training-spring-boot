@@ -1,5 +1,6 @@
 package com.ecommerce.microcommerce.configuration;
 
+import com.ecommerce.microcommerce.web.exceptions.UnAuthorizedException;
 import com.ecommerce.microcommerce.web.utils.JwtAuthenticationEntryPoint;
 import com.ecommerce.microcommerce.web.utils.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
