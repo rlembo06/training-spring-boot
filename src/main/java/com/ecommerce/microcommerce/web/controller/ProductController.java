@@ -26,7 +26,7 @@ import java.util.Map;
 
 // TODO : Handling 500 error https://dzone.com/articles/spring-rest-service-exception-handling-1
 
-@Api( description="API pour es opérations CRUD sur les produits.", tags = "products")
+@Api( description="API pour les opérations CRUD sur les produits.", tags = "products")
 @RestController
 public class ProductController {
 
