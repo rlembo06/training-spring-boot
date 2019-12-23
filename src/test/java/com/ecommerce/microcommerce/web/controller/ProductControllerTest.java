@@ -9,19 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
-
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProductControllerTest {
-
-    private Gson gson = new Gson();;
 
     private String baseUrl = "http://localhost:";
 
@@ -29,54 +25,33 @@ public class ProductControllerTest {
     private int port;
 
     @Autowired
-    private ProductController productController;
-
-    @Autowired
     private TestRestTemplate restTemplate;
 
     @Test
     public void listeProduits() throws Exception {
-        MappingJacksonValue list = productController.listeProduits();
-        String expected = gson.toJson(list.getValue());
-        String request = this.restTemplate.getForObject(baseUrl + port + "/Produits", String.class);
-
-        assertThat(request).contains(expected);
+        ResponseEntity requestOK = this.restTemplate.getForEntity(baseUrl + port + "/Produits", String.class);
+        assertThat(requestOK.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     public void afficherUnProduit() throws Exception {
-        Product item = productController.afficherUnProduit(1);
-        String expected = gson.toJson(item);
-        String request = this.restTemplate.getForObject(baseUrl + port + "/Produits/1", String.class);
+        ResponseEntity requestOK = this.restTemplate.getForEntity(baseUrl + port + "/Produits/1", String.class);
+        assertThat(requestOK.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        assertThat(request).contains(expected);
+        ResponseEntity requestNotFound = this.restTemplate.getForEntity(baseUrl + port + "/Produits/4", String.class);
+        assertThat(requestNotFound.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
     public void ajouterProduit() throws Exception {
-        Product bodyRequest = new Product(5, "Produit", 10, 10);
-        String request = this.restTemplate.postForObject(baseUrl + port + "/Produits/", bodyRequest, String.class);
-
-        assertThat(request).isNullOrEmpty();
+        Product bodyRequestCreated = new Product(5, "Produit", 10, 10);
+        ResponseEntity requestCreated = this.restTemplate.postForEntity(baseUrl + port + "/Produits", bodyRequestCreated, String.class);
+        assertThat(requestCreated.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
     public void trierProduitsParOrdreAlphabetique() throws Exception {
-        List<Product> list = productController.trierProduitsParOrdreAlphabetique();
-        String expected = gson.toJson(list);
-
-        String request = this.restTemplate.getForObject(baseUrl + port + "/ProduitsTries", String.class);
-        assertThat(request).contains(expected);
-        /*assertThatThrownBy(() -> {
-            productController.trierProduitsParOrdreAlphabetique();
-        }).isInstanceOf(ProduitInternalErrorException.class);*/
+        ResponseEntity requestOK = this.restTemplate.getForEntity(baseUrl + port + "/ProduitsTries", String.class);
+        assertThat(requestOK.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
-
-    /*@Test
-    public void trierProduitsParOrdreAlphabetique() {
-        assertThatThrownBy(() -> {
-                productController.trierProduitsParOrdreAlphabetique();
-        }).isInstanceOf(ProduitInternalErrorException.class);
-    }*/
-
 }
