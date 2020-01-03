@@ -101,6 +101,10 @@ public class ProductController {
 
     @PutMapping (value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
+        if(product.getPrix() <= 0){
+            throw new ProduitGratuitException("Impossible de modifier le produit car il est gratuit");
+        }
+
         try {
             productDao.save(product);
         } catch (Exception err) {
