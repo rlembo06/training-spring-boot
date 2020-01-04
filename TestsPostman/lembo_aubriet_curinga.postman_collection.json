@@ -11,66 +11,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}/Produits/",
+					"raw": "{{BASE_URL}}/Produits",
 					"host": [
 						"{{BASE_URL}}"
 					],
 					"path": [
-						"Produits",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "produits triés",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/ProduitsTries/",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"ProduitsTries",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "admin produits",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/AdminProduits",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"AdminProduits"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "produits by order",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/ProduitsTries/",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"ProduitsTries",
-						""
+						"Produits"
 					]
 				}
 			},
@@ -95,6 +41,51 @@
 			"response": []
 		},
 		{
+			"name": "produits by order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/ProduitsTries/",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"ProduitsTries",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin produits",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/AdminProduits",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"AdminProduits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "add produit",
 			"request": {
 				"method": "POST",
@@ -106,7 +97,33 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"nom\": \"Chromecast\",\n    \"prix\": 50,\n    \"prixAchat\": 10\n}"
+					"raw": "{\n    \"nom\": \"Ordinateur portable\",\n    \"prix\": 350,\n    \"prixAchat\": 120\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/Produits",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"Produits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add produit (gratuit exception)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nom\": \"Compte Canal\",\n    \"prix\": 0,\n    \"prixAchat\": 0\n}"
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/Produits",
@@ -132,7 +149,33 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"id\": 5,\n    \"nom\": \"Chromecast Ultra\",\n    \"prix\": 60,\n    \"prixAchat\": 10\n}"
+					"raw": "{\n\t\"id\": 4,\n    \"nom\": \"Chromecast Ultra\",\n    \"prix\": 80,\n    \"prixAchat\": 10\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/Produits",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"Produits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put produit (gratuit exception)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 4,\n    \"nom\": \"Chromecast Ultra\",\n    \"prix\": 0,\n    \"prixAchat\": 0\n}"
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/Produits",
@@ -163,6 +206,62 @@
 					"path": [
 						"Produits",
 						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"john_doe\",\n\t\"password\": \"password\"\n}\n"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/authenticate",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth (unauthorized)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"bad_user\",\n\t\"password\": \"bad_pwd\"\n}\n"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/authenticate",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"authenticate"
 					]
 				}
 			},
