@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.model.JwtRequest;
 import com.ecommerce.microcommerce.model.JwtResponse;
+import com.ecommerce.microcommerce.web.exceptions.UnAuthorizedException;
 import com.ecommerce.microcommerce.web.services.JwtUserDetailsService;
 import com.ecommerce.microcommerce.web.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
@@ -30,7 +31,7 @@ public class JwtAuthenticationController {
 
     @ApiOperation(value = "Permet de génerer un json web token")
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws UnAuthorizedException {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -41,13 +42,13 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password) throws UnAuthorizedException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+        } catch (DisabledException err) {
+            throw new UnAuthorizedException("USER_DISABLED: "+ err.getMessage());
+        } catch (BadCredentialsException err) {
+            throw new UnAuthorizedException("INVALID_CREDENTIALS: " + err.getMessage());
         }
     }
 }
