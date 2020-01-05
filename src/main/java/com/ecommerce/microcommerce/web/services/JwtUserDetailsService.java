@@ -1,23 +1,40 @@
 package com.ecommerce.microcommerce.web.services;
 
-import org.springframework.security.core.userdetails.User;
+import com.ecommerce.microcommerce.dao.UserDao;
+import com.ecommerce.microcommerce.model.User;
+import com.ecommerce.microcommerce.model.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
-    private final String SECURITY = "john_doe";
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (SECURITY.equals(username)) {
-            return new User(SECURITY, "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-                    new ArrayList<>());
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+
+        User user = (User) userDao.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("UserDTO not found with username: " + username);
         }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                new ArrayList<>());
+    }
+
+    public UserDao save(UserDTO userDTO) {
+        User newUser = new User();
+        newUser.setUsername(userDTO.getUsername());
+        newUser.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
+        return (UserDao) userDao.save(newUser);
     }
 }
