@@ -42,11 +42,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         // We don't need CSRF for this example
@@ -72,4 +75,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
+
+
+    /*
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        // We don't need CSRF for this example
+        httpSecurity.csrf().disable()
+
+                .authorizeRequests()
+                .antMatchers("/AdminProduits").permitAll()
+                .anyRequest().authenticated().and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // dont authenticate this particular request
+        // all other requests need to be authenticated
+        // make sure we use stateless session; session won't be used to
+        // store user's state.
+        // Add a filter to validate the tokens with every request
+    }
+
+     */
 }
