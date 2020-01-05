@@ -213,6 +213,29 @@
 		},
 		{
 			"name": "auth",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4d863330-64c8-48a3-b734-2f810dd743d1",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "271ec061-6ba4-487d-b420-25dca4c03941",
+						"exec": [
+							"let json = pm.response.json();",
+							"pm.environment.set(\"jwt\", json.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -225,7 +248,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"john_doe\",\n\t\"password\": \"password\"\n}\n"
+					"raw": "{\n\t\"username\": \"john_doe\",\n\t\"password\": \"password\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/authenticate",
@@ -253,7 +281,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"bad_user\",\n\t\"password\": \"bad_pwd\"\n}\n"
+					"raw": "{\n\t\"username\": \"bad_user\",\n\t\"password\": \"bad_pwd\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/authenticate",
