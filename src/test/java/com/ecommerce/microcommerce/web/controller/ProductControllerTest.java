@@ -91,7 +91,6 @@ public class ProductControllerTest {
 
         //auth
         ResponseEntity reqAuth = this.restTemplate.postForEntity(baseUrl + port + "/authenticate", jwtRequest, String.class);
-        //assertThat(reqAuth.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         JsonObject jsonObject = new JsonParser().parse(reqAuth.getBody().toString()).getAsJsonObject();
         HttpHeaders headers = new HttpHeaders();
