@@ -1,16 +1,19 @@
 package com.ecommerce.microcommerce.web.controller;
 
+import com.ecommerce.microcommerce.model.JwtRequest;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.model.User;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -80,12 +83,24 @@ public class ProductControllerTest {
 
     @Test
     public void calculerMargeProduits() throws Exception {
-        /* TODO : Faire test avec auth OK (pour Gabriel ?)
-        ResponseEntity requestOK = this.restTemplate.getForEntity(baseUrl + port + "/AdminProduits", String.class);
-        assertThat(requestOK.getStatusCode()).isEqualTo(HttpStatus.OK);*/
+        JwtRequest jwtRequest= new JwtRequest("kevin@example.fr", "password");
 
+        //unauth
         ResponseEntity requestUnAuth = this.restTemplate.getForEntity(baseUrl + port + "/AdminProduits", String.class);
         assertThat(requestUnAuth.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        //auth
+        ResponseEntity reqAuth = this.restTemplate.postForEntity(baseUrl + port + "/authenticate", jwtRequest, String.class);
+        //assertThat(reqAuth.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        JsonObject jsonObject = new JsonParser().parse(reqAuth.getBody().toString()).getAsJsonObject();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer "+jsonObject.get("token").getAsString());
+        HttpEntity httpEntity = new HttpEntity<>(headers);
+
+        ResponseEntity requestAuth = this.restTemplate.exchange(baseUrl + port + "/AdminProduits", HttpMethod.GET, httpEntity, String.class);
+        assertThat(requestAuth.getStatusCode()).isEqualTo(HttpStatus.OK);
+
     }
 
     @Test

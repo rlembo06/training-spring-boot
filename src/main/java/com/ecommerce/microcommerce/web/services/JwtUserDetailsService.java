@@ -23,7 +23,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = (User) userDao.findByUsername(username);
+        User user = userDao.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("UserDTO not found with username: " + username);
         }
@@ -31,10 +31,10 @@ public class JwtUserDetailsService implements UserDetailsService {
                 new ArrayList<>());
     }
 
-    public UserDao save(UserDTO userDTO) {
+    /*public UserDao save(UserDTO userDTO) {
         User newUser = new User();
         newUser.setUsername(userDTO.getUsername());
         newUser.setPassword(bcryptEncoder.encode(userDTO.getPassword()));
         return (UserDao) userDao.save(newUser);
-    }
+    }*/
 }
