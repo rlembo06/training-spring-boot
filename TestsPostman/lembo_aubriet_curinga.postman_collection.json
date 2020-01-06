@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b1e7ab83-02be-465b-9bc3-4ef85e106317",
+		"_postman_id": "6524e7f9-5325-45d0-aec3-10611dc7a6f6",
 		"name": "lembo_aubriet_curinga",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -248,7 +248,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"john_doe\",\n\t\"password\": \"password\"\n}\n",
+					"raw": "{\n\t\"username\": \"kevin@example.fr\",\n\t\"password\": \"password\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
