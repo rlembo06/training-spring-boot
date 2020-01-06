@@ -41,6 +41,24 @@
 			"response": []
 		},
 		{
+			"name": "produits by id (not found)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/Produits/1",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"Produits",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "produits by order",
 			"request": {
 				"method": "GET",
@@ -59,17 +77,10 @@
 			"response": []
 		},
 		{
-			"name": "admin produits",
+			"name": "admin produits (unauthorized)",
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt}}",
-							"type": "string"
-						}
-					]
+					"type": "noauth"
 				},
 				"method": "GET",
 				"header": [],
@@ -248,12 +259,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"kevin@example.fr\",\n\t\"password\": \"password\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					"raw": "{\n\t\"username\": \"kevin@example.fr\",\n\t\"password\": \"password\"\n}\n"
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/authenticate",
@@ -281,12 +287,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\": \"bad_user\",\n\t\"password\": \"bad_pwd\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					"raw": "{\n\t\"username\": \"bad_user\",\n\t\"password\": \"bad_pwd\"\n}\n"
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/authenticate",
@@ -295,6 +296,33 @@
 					],
 					"path": [
 						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin produits",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/AdminProduits",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"AdminProduits"
 					]
 				}
 			},
